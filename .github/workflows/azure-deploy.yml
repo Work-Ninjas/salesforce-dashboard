@@ -27,9 +27,15 @@ jobs:
       run: |
         echo "Application ready for deployment"
 
+    - name: Create deployment package
+      run: zip -r deploy.zip . -x "*.git*" "node_modules/*" "*.md" "tests/*"
+
+    - name: Decode publish profile
+      run: echo "${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BASE64 }}" | base64 -d > publish-profile.xml
+
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'salesforce-dashboard-linux'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: .
+        package: deploy.zip
