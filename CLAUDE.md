@@ -24,9 +24,13 @@ The project connects to Azure SQL Server with the following:
 ## Commands
 ```bash
 npm install          # Install dependencies
-npm start           # Run the server on port 3000
+npm start           # Run the server on port 3005
 npm run dev         # Run with nodemon for development (if configured)
 ```
+
+## Local Development
+The server runs locally at: http://localhost:3005/
+Dashboard available at: http://localhost:3005/index.html
 
 ## API Endpoints
 - `GET /api/division-summary` - Returns aggregated metrics grouped by year and division
