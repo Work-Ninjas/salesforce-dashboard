@@ -1,5 +1,35 @@
+# Dependencies
 node_modules/
-*.log
+
+# Environment and secrets
 .env
-app.zip app-full.zip app-logs.zip deps-installer.zip
-app-with-deps.tar.gz deploy-quick.tar.gz
+*.log
+
+# Build and deployment artifacts
+*.zip
+*.tar.gz
+*.cmd
+*.ps1
+*.yml
+web.config*
+startup.cmd
+iisnode.yml
+nul
+
+# Excel reports and test files
+*.xlsx
+*.csv
+*.png
+
+# Deployment and test folders
+deploy/
+deploy-package/
+test-results/
+api/package-lock.json
+
+# Configuration files created during deployment
+.deployment
+config/database.js
+
+# Claude IDE settings (keep local only)
+.claude/settings.local.json
