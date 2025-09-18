@@ -1,0 +1,61 @@
+Quiero que me ayudes a construir un proyecto en Node.js + Azure SQL que sirva de base para un dashboard web (lo haré luego en HTML/JS).  
+
+### Contexto de datos
+Tengo una tabla `Opportunity` en Azure SQL con estos campos principales:
+- Id
+- Name
+- Created_Date
+- LastStageChangeDate
+- StageName (Prospect, Approved, Lost, etc.)
+- LeadType (Company Lead, Self Generated)
+- Division
+- Amount
+- RecordTypeId (uso uno específico para Residential)
+
+### Reglas de negocio
+- Si StageName = Approved o Lost → usar `LastStageChangeDate` como referencia de año.
+- Si está en Prospect u otro inicial → usar `Created_Date` como referencia de año.
+- CloseRate_Std = (# Approved / # Total Opportunities).
+- CloseRate_NoLost = (# Approved / (# Total Opportunities - # Lost)).
+- AverageTicket = (SUM Amount Approved / # Approved).
+- TotalRevenue = SUM Amount Approved.
+- OpenOpportunities = Total - Won - Lost.
+
+### Queries base (agregados)
+1. **Division Summary** (por año y división):  
+   - TotalOpportunities  
+   - WonOpportunities (StageName = Approved)  
+   - LostOpportunities (StageName = Lost)  
+   - OpenOpportunities  
+   - TotalRevenue  
+   - AverageTicket  
+   - CloseRate_Std  
+   - CloseRate_NoLost  
+
+2. **Lead Summary** (por año y LeadType):  
+   - Igual que arriba pero agrupado por LeadType.
+
+3. **Opportunity Detail (drill-through):**  
+   - Lista completa de oportunidades (Id, Name, StageName, Division, LeadType, Amount, Created_Date, LastStageChangeDate).  
+   - Debe poder filtrarse por año, división, stage y lead type.  
+   - Esto sirve para ver el detalle de cada métrica (ejemplo: qué oportunidades entran en “WonOpportunities” o cuáles componen un determinado CloseRate).  
+
+### Lo que necesito que desarrolles
+- Un proyecto Node.js con Express y `mssql` para conectarse a Azure SQL.
+- Configuración de conexión con parámetros estándar de Azure SQL.
+- Endpoints REST:
+  - `/api/division-summary` → ejecuta el query de Division Summary.
+  - `/api/lead-summary` → ejecuta el query de Lead Summary.
+  - `/api/opportunity-detail?year=2023&division=Residential&stage=Approved` → devuelve el detalle filtrado.
+- Cada endpoint debe devolver JSON.
+- (Opcional) dejar preparado un ejemplo de export a Excel usando `exceljs`.
+
+### Importante
+- Los endpoints de summary (division-summary, lead-summary) siempre deben estar construidos sobre los queries agregados que ya definimos.  
+- Además, desde esos mismos datos necesito poder sacar los detalles de cada métrica (ejemplo: al ver un CloseRate de 30% en 2023, debo poder consultar con opportunity-detail cuáles fueron las oportunidades ganadas y cuáles fueron totales).  
+- Es decir: **todo agregado debe tener su query base y un query de detalle asociado**.
+
+### Entregables esperados
+1. `server.js` con los endpoints funcionando.
+2. Instrucciones de cómo correrlo en VS Code (`npm install`, `npm start`).
+3. Código bien estructurado y comentado para luego conectar el frontend (Chart.js y export a Excel).

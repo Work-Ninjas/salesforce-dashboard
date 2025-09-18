@@ -1,0 +1,25 @@
+WITH Base AS (
+    SELECT 
+        o.Id,
+        o.Name,
+        o.StageName,
+        o.Division,
+        o.LeadType,
+        o.Amount,
+        o.Created_Date,
+        o.LastStageChangeDate,
+        o.RecordTypeId,
+        YEAR(
+            CASE 
+                WHEN o.StageName IN ('Approved','Lost') AND o.LastStageChangeDate IS NOT NULL 
+                    THEN o.LastStageChangeDate
+                ELSE o.Created_Date
+            END
+        ) AS YearValue
+    FROM Opportunity o
+    WHERE (o.JNID IS NULL OR (o.JNID IS NOT NULL AND o.Amount <> 0))
+      AND o.RecordTypeId IN ('0123t000000JD7jAAG','0123t000000JD7eAAG') -- Residential
+)
+SELECT *
+FROM Base
+ORDER BY YearValue, Division, StageName, Created_Date;

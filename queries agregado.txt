@@ -1,0 +1,106 @@
+WITH Base AS (
+    SELECT 
+        Id,
+        Created_Date,
+        LastStageChangeDate,
+        StageName,
+        LeadType,
+        Amount,
+        Division,
+        RecordTypeId,
+        YEAR(
+            CASE 
+                WHEN StageName IN ('Approved','Lost') AND LastStageChangeDate IS NOT NULL 
+                    THEN LastStageChangeDate
+                ELSE Created_Date
+            END
+        ) AS YearValue
+    FROM Opportunity
+    WHERE (JNID IS NULL OR (JNID IS NOT NULL AND Amount <> 0))
+      AND RecordTypeId in ('0123t000000JD7jAAG','0123t000000JD7eAAG') -- Residential
+)
+SELECT 
+    YearValue AS Year,
+    CASE WHEN GROUPING(Division) = 1 THEN 'TOTAL' ELSE Division END AS Division,
+    COUNT(Id) AS TotalOpportunities,
+    SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) AS WonOpportunities,
+    SUM(CASE WHEN StageName = 'Lost' THEN 1 ELSE 0 END) AS LostOpportunities,
+    SUM(CASE WHEN StageName NOT IN ('Approved','Lost') THEN 1 ELSE 0 END) AS OpenOpportunities,
+    FORMAT(SUM(CASE WHEN StageName = 'Approved' THEN Amount ELSE 0 END), 'C', 'en-US') AS TotalRevenue,
+    FORMAT(
+        CASE 
+            WHEN SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) > 0
+            THEN SUM(CASE WHEN StageName = 'Approved' THEN Amount ELSE 0 END) 
+                 / SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END)
+            ELSE 0 
+        END, 'C', 'en-US'
+    ) AS AverageTicket,
+    -- Close Rate estándar (con Lost)
+    FORMAT(
+        CAST(SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) AS FLOAT) 
+            / NULLIF(COUNT(Id),0),
+        'P'
+    ) AS CloseRate_Std,
+    -- Close Rate alterno (excluyendo Lost del denominador)
+    FORMAT(
+        CAST(SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) AS FLOAT)
+            / NULLIF(SUM(CASE WHEN StageName IN ('Approved') OR StageName NOT IN ('Lost') THEN 1 ELSE 0 END),0),
+        'P'
+    ) AS CloseRate_NoLost
+FROM Base
+GROUP BY YearValue, ROLLUP(Division)
+ORDER BY YearValue, Division;
+
+
+WITH Base AS (
+    SELECT 
+        Id,
+        Created_Date,
+        LastStageChangeDate,
+        StageName,
+        LeadType,
+        Amount,
+        Division,
+        RecordTypeId,
+        YEAR(
+            CASE 
+                WHEN StageName IN ('Approved','Lost') AND LastStageChangeDate IS NOT NULL 
+                    THEN LastStageChangeDate
+                ELSE Created_Date
+            END
+        ) AS YearValue
+    FROM Opportunity
+    WHERE (JNID IS NULL OR (JNID IS NOT NULL AND Amount <> 0))
+      AND RecordTypeId in ('0123t000000JD7jAAG','0123t000000JD7eAAG') -- Residential
+)
+SELECT 
+    YearValue AS Year,
+    CASE WHEN GROUPING(LeadType) = 1 THEN 'TOTAL' ELSE LeadType END AS LeadType,
+    COUNT(Id) AS TotalOpportunities,
+    SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) AS WonOpportunities,
+    SUM(CASE WHEN StageName = 'Lost' THEN 1 ELSE 0 END) AS LostOpportunities,
+    SUM(CASE WHEN StageName NOT IN ('Approved','Lost') THEN 1 ELSE 0 END) AS OpenOpportunities,
+    FORMAT(SUM(CASE WHEN StageName = 'Approved' THEN Amount ELSE 0 END), 'C', 'en-US') AS TotalRevenue,
+    FORMAT(
+        CASE 
+            WHEN SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) > 0
+            THEN SUM(CASE WHEN StageName = 'Approved' THEN Amount ELSE 0 END) 
+                 / SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END)
+            ELSE 0 
+        END, 'C', 'en-US'
+    ) AS AverageTicket,
+    -- Close Rate estándar (con Lost)
+    FORMAT(
+        CAST(SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) AS FLOAT) 
+            / NULLIF(COUNT(Id),0),
+        'P'
+    ) AS CloseRate_Std,
+    -- Close Rate alterno (excluyendo Lost del denominador)
+    FORMAT(
+        CAST(SUM(CASE WHEN StageName = 'Approved' THEN 1 ELSE 0 END) AS FLOAT)
+            / NULLIF(SUM(CASE WHEN StageName IN ('Approved') OR StageName NOT IN ('Lost') THEN 1 ELSE 0 END),0),
+        'P'
+    ) AS CloseRate_NoLost
+FROM Base
+GROUP BY YearValue, ROLLUP(LeadType)
+ORDER BY YearValue, LeadType;

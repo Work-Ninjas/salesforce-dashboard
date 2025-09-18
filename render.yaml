@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: salesforce-dashboard
+    runtime: node
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_USER
+        value: claude2
+      - key: DB_PASSWORD
+        value: Roofsquad$2025
+      - key: DB_SERVER
+        value: sfdc-backup.database.windows.net
+      - key: DB_DATABASE
+        value: Commission
+    healthCheckPath: /api
+    autoDeploy: true

@@ -1,0 +1,4 @@
+server : sfdc-backup.database.windows.net
+login : claude2
+clave : Roofsquad$2025
+bdd: Commission
