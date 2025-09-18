@@ -1,0 +1,15 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "salesforce-dashboard": {
+      "appLocation": ".",
+      "apiLocation": "api",
+      "outputLocation": ".",
+      "appBuildCommand": "",
+      "apiBuildCommand": "",
+      "run": "",
+      "appDevserverUrl": null,
+      "apiDevserverUrl": null
+    }
+  }
+}
