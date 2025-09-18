@@ -32,6 +32,11 @@ npm run dev         # Run with nodemon for development (if configured)
 The server runs locally at: http://localhost:3005/
 Dashboard available at: http://localhost:3005/index.html
 
+## Deployment
+- **GitHub Repository**: https://github.com/Work-Ninjas/salesforce-dashboard
+- **Render.com (Production)**: Successfully deployed - auto-deploys from main branch
+- **Azure App Service**: Configured but deployment requires admin permissions
+
 ## API Endpoints
 - `GET /api/division-summary` - Returns aggregated metrics grouped by year and division
 - `GET /api/lead-summary` - Returns aggregated metrics grouped by year and lead type
