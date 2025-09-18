@@ -2,6 +2,8 @@
 
 API backend para análisis de oportunidades de Salesforce con exportación a Excel.
 
+[![Deploy to Azure](https://github.com/Work-Ninjas/salesforce-dashboard/actions/workflows/azure-deploy.yml/badge.svg)](https://github.com/Work-Ninjas/salesforce-dashboard/actions/workflows/azure-deploy.yml)
+
 ## Instalación
 
 ```bash
